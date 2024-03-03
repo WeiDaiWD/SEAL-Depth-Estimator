@@ -80,7 +80,10 @@ static Capability estimate(size_t poly_modulus_degree, int plain_modulus_bit_siz
     encoder.encode(messages, pt);
     Ciphertext ct;
     encryptor.encrypt(pt, ct);
-
+    if (scheme == scheme_type::bfv)
+    {
+        evaluator.mod_switch_to_next_inplace(ct);
+    }
     int budget = decryptor.invariant_noise_budget(ct);
 
     // If coeff_modulus has only 1 prime, relinearization is disabled, so is squaring.
@@ -100,6 +103,10 @@ static Capability estimate(size_t poly_modulus_degree, int plain_modulus_bit_siz
         capability.budget_bits = budget;
         evaluator.square_inplace(ct);
         evaluator.relinearize_inplace(ct, rk);
+        if (scheme == scheme_type::bfv)
+        {
+            evaluator.mod_switch_to_next_inplace(ct);
+        }
         budget = decryptor.invariant_noise_budget(ct);
     }
 
@@ -124,7 +131,7 @@ static void print_test(size_t poly_modulus_degree, int plain_modulus_bit_size, c
 
 int main()
 {
-    print_test(32768, 20, {60, 30, 30, 52, 50, 56, 60, 60, 60, 60, 60, 60, 60, 60, 60}); //L = 21
+    print_test(32768, 20, {60, 30, 30, 52, 50, 56, 60, 60, 60, 60, 60, 60, 60, 60, 60}, scheme_type::bgv); //L = 21
 
     return 0;
 }
