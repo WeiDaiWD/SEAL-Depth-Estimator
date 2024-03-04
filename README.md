@@ -1,6 +1,6 @@
 # SEAL-Depth-Estimator
 
-Query with a polynomial modulus degree, a bit-size of plaintext modulus, and a vector of bit-sizes of ciphertext moduli to learn the maximum depth (a.k.a. the number of sequential squaring operations on a ciphertext) and the noise budget left when the maximum depth has reached.
+Query with a polynomial modulus degree, a bit-size of plaintext modulus, and a vector of bit-sizes of ciphertext moduli to learn the maximum depth (a.k.a. the number of sequential multiplication operations on a ciphertext) and the noise budget left when the maximum depth has reached.
 This program uses asymmetric encryption and fully split batching (`BatchEncoder`).
 
 ## How to Use
@@ -22,6 +22,7 @@ In this repository, run the following scripts.
 
 ```
 git clone --recursive https://github.com/WeiDaiWD/SEAL-Depth-Estimator.git
+cd SEAL-Depth-Estimator
 export SEAL_DIR=../SEAL/build/
 cmake -S . -B build
 cmake --build build
