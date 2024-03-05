@@ -114,10 +114,18 @@ static Capability estimate(size_t poly_modulus_degree, int plain_modulus_bit_siz
 
 static void print_test(size_t poly_modulus_degree, int plain_modulus_bit_size, const vector<int> &coeff_modulus_bit_sizes, scheme_type scheme)
 {
-    if (scheme == scheme_type::bgv){
+    if (scheme == scheme_type::bgv)
+    {
         cout << "---BGV---" << endl;
-    }else{
+    }
+    else if (scheme == scheme_type::bfv)
+    {
         cout << "---BFV---" << endl;
+    }
+    else
+    {
+        cout << "Unsupported scheme" << endl;
+        return;
     }
     cout << "( " << poly_modulus_degree << ", " << plain_modulus_bit_size << ", {";
     size_t coeff_mod_prod = 0;
