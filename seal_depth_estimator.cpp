@@ -149,14 +149,14 @@ int main()
     print_test(16384, 20, {59, 59, 45, 59, 59, 24, 59, 60}, scheme_type::bfv);// L = 10, logq = 424
     print_test(16384, 20, {59, 59, 36, 59, 59, 59, 60}, scheme_type::bfv); //L = 9, logq = 391
     print_test(32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60}, scheme_type::bfv); //L = 14, logq = 585
-    print_test(32768, 20, {60, 30, 30, 50, 52, 50, 50, 60, 60, 60, 60}, scheme_type::bfv); //L = 13, logq = 572
+    print_test(32768, 20, {60, 30, 30, 50, 52, 50, 50, 60, 60, 60, 60}, scheme_type::bfv); //L = 13, logq = 562
     print_test(65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bfv); //L =  23, logq = 920
     print_test(65536, 20, {60, 58, 40, 50, 52, 50, 30, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bfv); //L = 22, logq = 880
 
     print_test(16384, 20, {59, 59, 45, 59, 59, 24, 59, 60}, scheme_type::bgv);// L = 5, logq = 424
     print_test(16384, 20, {59, 59, 36, 59, 59, 59, 60}, scheme_type::bgv); //L = 4, logq = 391
     print_test(32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60}, scheme_type::bgv); //L = 8, logq = 585
-    print_test(32768, 20, {60, 30, 30, 50, 52, 50, 50, 60, 60, 60, 60}, scheme_type::bgv); //L = 7, logq = 572
+    print_test(32768, 20, {60, 30, 30, 50, 52, 50, 50, 60, 60, 60, 60}, scheme_type::bgv); //L = 7, logq = 562
     print_test(65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bgv); //L = 13, logq = 920 
     print_test(65536, 20, {60, 58, 40, 50, 52, 50, 30, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bgv); //L = 12, logq = 880
     return 0;
@@ -169,7 +169,7 @@ int main()
 // ---BFV---
 // ( 32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60} )     (logq = 585) maximum depth: 14, noise budget left: 12 bits
 // ---BFV---
-// ( 32768, 20, {60, 30, 30, 50, 52, 50, 60, 60, 60, 60, 60} )     (logq = 572) maximum depth: 13, noise budget left: 33 bits
+// ( 32768, 20, {60, 30, 30, 50, 52, 50, 60, 60, 60, 60, 60} )     (logq = 562) maximum depth: 13, noise budget left: 25 bits
 // ---BFV---
 // ( 65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60} ) (logq = 920) maximum depth: 23, noise budget left: 13 bits
 // ---BFV---
@@ -181,7 +181,7 @@ int main()
 // ---BGV---
 // ( 32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60} )     (logq = 585) maximum depth: 8, noise budget left: 3 bits
 // ---BGV---
-// ( 32768, 20, {60, 30, 30, 50, 52, 50, 60, 60, 60, 60, 60} )     (logq = 572) maximum depth: 8, noise budget left: 3 bits
+// ( 32768, 20, {60, 30, 30, 50, 52, 50, 60, 60, 60, 60, 60} )     (logq = 562) maximum depth: 8, noise budget left: 2 bits
 // ---BGV---
 // ( 65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60} ) (logq = 920) maximum depth: 13, noise budget left: 31 bits
 // ---BGV---
