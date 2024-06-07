@@ -78,9 +78,8 @@ static Capability estimate(size_t poly_modulus_degree, int plain_modulus_bit_siz
     }
     Plaintext pt;
     encoder.encode(messages, pt);
-    Ciphertext ct, ct_0;
+    Ciphertext ct;
     encryptor.encrypt(pt, ct);
-    encryptor.encrypt(pt, ct_0);
     
     int budget = decryptor.invariant_noise_budget(ct);
 
@@ -99,7 +98,7 @@ static Capability estimate(size_t poly_modulus_degree, int plain_modulus_bit_siz
     {
         capability.max_depth++;
         capability.budget_bits = budget;
-        evaluator.multiply_inplace(ct, ct_0);
+        evaluator.square_inplace(ct);
         evaluator.relinearize_inplace(ct, rk);
         budget = decryptor.invariant_noise_budget(ct);
         if (scheme == scheme_type::bgv && budget > 0)
@@ -138,51 +137,69 @@ static void print_test(size_t poly_modulus_degree, int plain_modulus_bit_size, c
             cout << ", ";
         }
     }
-    cout << "} )\t";
-    cout << "(logq = "<<coeff_mod_prod<<") "; 
+    cout << "} ), ";
+    cout << "logq = "<<coeff_mod_prod<<", ";
     Capability capability = estimate(poly_modulus_degree, plain_modulus_bit_size, coeff_modulus_bit_sizes, scheme);
     cout << "maximum depth: " << capability.max_depth << ", noise budget left: " << capability.budget_bits << " bits" << endl;
 }
 
 int main()
 {
-    print_test(16384, 20, {59, 59, 45, 59, 59, 24, 59, 60}, scheme_type::bfv);// L = 10, logq = 424
-    print_test(16384, 20, {59, 59, 36, 59, 59, 59, 60}, scheme_type::bfv); //L = 9, logq = 391
-    print_test(32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60}, scheme_type::bfv); //L = 14, logq = 585
-    print_test(32768, 20, {60, 30, 30, 50, 52, 50, 50, 60, 60, 60, 60}, scheme_type::bfv); //L = 13, logq = 562
-    print_test(65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bfv); //L =  23, logq = 920
-    print_test(65536, 20, {60, 58, 40, 50, 52, 50, 30, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bfv); //L = 22, logq = 880
+    // BFV, 128-bit classic, logq = 424
+    print_test(16384, 20, {53, 53, 53, 53, 53, 53, 53, 53}, scheme_type::bfv);
+    // BFV, 192-bit classic, logq = 585
+    print_test(32768, 20, {59, 58, 58, 58, 58, 58, 59, 59, 59, 59}, scheme_type::bfv);
+    // BFV, 256-bit classic, logq = 920
+    print_test(65536, 20, {58, 57, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58}, scheme_type::bfv);
 
-    print_test(16384, 20, {59, 59, 45, 59, 59, 24, 59, 60}, scheme_type::bgv);// L = 5, logq = 424
-    print_test(16384, 20, {59, 59, 36, 59, 59, 59, 60}, scheme_type::bgv); //L = 4, logq = 391
-    print_test(32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60}, scheme_type::bgv); //L = 8, logq = 585
-    print_test(32768, 20, {60, 30, 30, 50, 52, 50, 50, 60, 60, 60, 60}, scheme_type::bgv); //L = 7, logq = 562
-    print_test(65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bgv); //L = 13, logq = 920 
-    print_test(65536, 20, {60, 58, 40, 50, 52, 50, 30, 60, 60, 60, 60, 60,  60, 60, 60, 60}, scheme_type::bgv); //L = 12, logq = 880
+    // BFV, 128-bit post-quantum, logq = 391
+    print_test(16384, 20, {56, 55, 56, 56, 56, 56, 56}, scheme_type::bfv);
+    // BFV, 192-bit post-quantum, logq = 562
+    print_test(32768, 20, {57, 56, 56, 56, 56, 56, 56, 56, 56, 57}, scheme_type::bfv);
+    // BFV, 256-bit post-quantum, logq = 880
+    print_test(65536, 20, {59, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 59, 59}, scheme_type::bfv);
+
+    // The following parameter choices for BGV assumes a fairly stable behavior.
+    // Better parameters that support one more level in best cases may lose several leveal in corner cases.
+
+    // BGV, 128-bit classic, logq = 424
+    print_test(16384, 20, {43, 42, 42, 42, 42, 42, 42, 43, 43, 43}, scheme_type::bgv);
+    // BGV, 192-bit classic, logq = 585
+    print_test(32768, 20, {42, 41, 41, 41, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42}, scheme_type::bgv);
+    // BGV, 256-bit classic, logq = 920
+    print_test(65536, 20, {44, 43, 43, 43, 43, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44}, scheme_type::bgv);
+
+    // BGV, 128-bit post-quantum, logq = 391
+    print_test(16384, 20, {44, 43, 43, 43, 43, 43, 44, 44, 44}, scheme_type::bgv);
+    // BGV, 192-bit post-quantum, logq = 562
+    print_test(32768, 20, {44, 43, 43, 43, 44, 44, 44, 44, 44, 44, 44, 44, 44}, scheme_type::bgv);
+    // BGV, 256-bit post-quantum, logq = 880
+    print_test(65536, 20, {44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44}, scheme_type::bgv);
     return 0;
 }
+
 // A printout example
 // ---BFV---
-// ( 16384, 20, {59, 59, 45, 59, 59, 24, 59, 60} ) (logq = 424) maximum depth: 10, noise budget left: 1 bits
+// ( 16384, 20, {53, 53, 53, 53, 53, 53, 53, 53} ), logq = 424, maximum depth: 10, noise budget left: 8 bits
 // ---BFV---
-// ( 16384, 20, {59, 59, 36, 59, 59, 59, 60} )     (logq = 391) maximum depth: 9, noise budget left: 1 bits
+// ( 32768, 20, {59, 58, 58, 58, 58, 58, 59, 59, 59, 59} ), logq = 585, maximum depth: 14, noise budget left: 14 bits
 // ---BFV---
-// ( 32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60} )     (logq = 585) maximum depth: 14, noise budget left: 12 bits
+// ( 65536, 20, {58, 57, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58} ), logq = 920, maximum depth: 23, noise budget left: 9 bits
 // ---BFV---
-// ( 32768, 20, {60, 30, 30, 50, 52, 50, 60, 60, 60, 60, 60} )     (logq = 562) maximum depth: 13, noise budget left: 25 bits
+// ( 16384, 20, {56, 55, 56, 56, 56, 56, 56} ), logq = 391, maximum depth: 9, noise budget left: 6 bits
 // ---BFV---
-// ( 65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60} ) (logq = 920) maximum depth: 23, noise budget left: 13 bits
+// ( 32768, 20, {57, 56, 56, 56, 56, 56, 56, 56, 56, 57} ), logq = 562, maximum depth: 13, noise budget left: 28 bits
 // ---BFV---
-// ( 65536, 20, {60, 58, 40, 50, 52, 50, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60} ) (logq = 880) maximum depth: 22, noise budget left: 6 bits
+// ( 65536, 20, {59, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 59, 59} ), logq = 880, maximum depth: 22, noise budget left: 7 bits
 // ---BGV---
-// ( 16384, 20, {59, 59, 45, 59, 59, 24, 59, 60} ) (logq = 424) maximum depth: 5, noise budget left: 31 bits
+// ( 16384, 20, {43, 42, 42, 42, 42, 42, 42, 43, 43, 43} ), logq = 424, maximum depth: 8, noise budget left: 14 bits
 // ---BGV---
-// ( 16384, 20, {59, 59, 36, 59, 59, 59, 60} )     (logq = 391) maximum depth: 4, noise budget left: 30 bits
+// ( 32768, 20, {42, 41, 41, 41, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42} ), logq = 585, maximum depth: 12, noise budget left: 13 bits
 // ---BGV---
-// ( 32768, 20, {60, 30, 30, 50, 55, 60, 60, 60, 60, 60, 60} )     (logq = 585) maximum depth: 8, noise budget left: 3 bits
+// ( 65536, 20, {44, 43, 43, 43, 43, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44} ), logq = 920, maximum depth: 19, noise budget left: 14 bits
 // ---BGV---
-// ( 32768, 20, {60, 30, 30, 50, 52, 50, 60, 60, 60, 60, 60} )     (logq = 562) maximum depth: 8, noise budget left: 2 bits
+// ( 16384, 20, {44, 43, 43, 43, 43, 43, 44, 44, 44} ), logq = 391, maximum depth: 7, noise budget left: 15 bits
 // ---BGV---
-// ( 65536, 20, {60, 58, 50, 50, 52, 50, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60} ) (logq = 920) maximum depth: 13, noise budget left: 31 bits
+// ( 32768, 20, {44, 43, 43, 43, 44, 44, 44, 44, 44, 44, 44, 44, 44} ), logq = 569, maximum depth: 11, noise budget left: 15 bits
 // ---BGV---
-// ( 65536, 20, {60, 58, 40, 50, 52, 50, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60} ) (logq = 880) maximum depth: 12, noise budget left: 17 bits
+// ( 65536, 20, {44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44} ), logq = 880, maximum depth: 18, noise budget left: 14 bits
